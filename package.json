@@ -1,0 +1,28 @@
+{
+  "name": "erc721-validator",
+  "version": "1.0.0",
+  "description": "Automatic validation of contracts if they follow erc721 standard.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xcert/erc721-validator.git"
+  },
+  "keywords": [
+    "erc721",
+    "validator"
+  ],
+  "author": "0xcert",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/0xcert/erc721-validator/issues"
+  },
+  "homepage": "https://github.com/0xcert/erc721-validator#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "fs": "0.0.1-security",
+    "web3": "^1.0.0-beta.34"
+  }
+}
