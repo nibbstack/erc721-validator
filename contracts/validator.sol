@@ -405,7 +405,7 @@ interface ERC165 {
 
 }
 
-contract Validator is ERC721TokenReceiver
+contract BasicValidator
 {
   using AddressUtils for address;
   using SafeMath for uint256;
@@ -414,39 +414,46 @@ contract Validator is ERC721TokenReceiver
   bytes4 constant ERC721ID = 0x80ac58cd;
   bytes4 constant ERC721MetadataID = 0x5b5e139f;
   bytes4 constant ERC721EnumerableID = 0x780e9d63;
-  bytes4 constant MAGIC_ON_ERC721_RECEIVED = 0x150b7a02;
-  address stub1;
-  address stub2;
-  address stub3;
 
-  mapping(address => uint) contractToId;
-  
   constructor(
-    address _stub1,
-    address _stub2,
-    address _stub3
-  ) public {
-    stub1 = _stub1;
-    stub2 = _stub2;
-    stub3 = _stub3;
-      /*if (caseId == 0) { // sanitiy check
-          testCase0(target);
-          return;
-      }
-      if (caseId == 1) {
-          testCase1(target);
-          return;
-      }else if (caseId == 2) {
-          testCase2(target);
-          return;
-      }else if (caseId == 3) {
-          testCase3(target);
-          return;
-      }else if (caseId == 4) {
-          testCase4(target);
-          return;
-      }
-      assert(false);*/
+    uint256 _caseId,
+    address _target
+  ) 
+    public 
+  {
+    if (_caseId == 1) { 
+      sanityCheck(_target);
+      return;
+    } else if (_caseId == 2) {
+      checkERC165Interface(_target);
+      return;
+    } else if (_caseId == 3) {
+      checkERC721Interface(_target);
+      return;
+    } else if (_caseId == 4) {
+      checkERC721MetadataInterface(_target);
+      return;
+    } else if (_caseId == 5) {
+      checkERC721EnumerableInterface(_target);
+      return;
+    } else if (_caseId == 6){
+      checkBalanceOfZeroAddress(_target);
+      return;
+    } else if (_caseId == 7){
+      checkMetadataName(_target);
+      return;
+    } else if (_caseId == 8){
+      checkMetadataSymbol(_target);
+      return;
+    } else if (_caseId == 9){
+      checkTotalSupply(_target);
+      return;
+    } else if (_caseId == 10){
+      checkZeroTokenByIndex(_target);
+      return;
+    }
+
+    assert(false);
   }
   
   /**
@@ -457,7 +464,7 @@ contract Validator is ERC721TokenReceiver
   function sanityCheck(
     address _target
   ) 
-    external 
+    internal 
   {
     require(_target.balance >= 0);
     assert(_target.isContract());
@@ -469,7 +476,7 @@ contract Validator is ERC721TokenReceiver
   function checkERC165Interface(
     address _target
   ) 
-    external
+    internal
   {
     bool result = ERC165(_target).supportsInterface(ERC165ID);
     assert(result);
@@ -481,7 +488,7 @@ contract Validator is ERC721TokenReceiver
   function checkERC721Interface(
     address _target
   ) 
-    external 
+    internal 
   {
     bool result = ERC165(_target).supportsInterface(ERC721ID);
     assert(result);
@@ -493,7 +500,7 @@ contract Validator is ERC721TokenReceiver
   function checkERC721MetadataInterface(
     address _target
   )
-    external
+    internal
   {
     bool result = ERC165(_target).supportsInterface(ERC721MetadataID);
     assert(result);
@@ -505,7 +512,7 @@ contract Validator is ERC721TokenReceiver
   function checkERC721EnumerableInterface(
     address _target
   ) 
-    external
+    internal
   {
     bool result = ERC165(_target).supportsInterface(ERC721EnumerableID);
     assert(result);
@@ -517,73 +524,63 @@ contract Validator is ERC721TokenReceiver
   function checkBalanceOfZeroAddress(
     address _target
   ) 
-    external
+    internal
   {
     ERC721(_target).balanceOf(address(0));
   }
 
   /**
-   * @dev balanceOf(ownerOf(TEST_TOKEN_ID) should be > 0.
+   * @dev name() should not throw.
    */
-  function checkBalanceBasedOnToken(
-    address _target,
-    uint256 _tokenId
-  ) 
-    external
-  {
-    require(ERC721(_target).balanceOf(ERC721(_target).ownerOf(_tokenId)) > 0);
-  }
-
-  /**
-   * @dev ownerOf(TEST_TOKEN_ID) should return an address > 0.
-   */
-  function checkNotEmptyOwner(
-    address _target,
-    uint256 _tokenId
-  ) 
-    external
-  {
-    require(ERC721(_target).ownerOf(_tokenId) != address(0));
-  }
-
-  /**
-   * @dev  Get a token from giver, transferFrom self to a stub, check balanceOf() stub before and 
-   * after transfer, it should be one more.
-   */
-  function checkBalanceOnTransfer(
+  function checkMetadataName(
     address _target
-  ) 
-    external
+  )
+    internal
   {
-    uint256 balance = ERC721(_target).balanceOf(stub1);
-    ERC721(_target).transferFrom(address(this), stub1, contractToId[_target]);
-    require(ERC721(_target).balanceOf(stub1) == balance.add(1));
+    ERC721Metadata(_target).name();
   }
 
   /**
-   * @dev Get a token from giver, transferFrom to zero address, should throw.
+   * @dev symbol() should not throw.
    */
-  function checkTransferToZeroAddress(
+  function checkMetadataSymbol(
     address _target
-  ) 
-    external
+  )
+    internal
   {
-    ERC721(_target).transferFrom(address(this), address(0), contractToId[_target]);
+    ERC721Metadata(_target).symbol();
   }
 
   /**
-   * @dev transferFrom giver to self, this should throw because giver does not authorize the 
-   * transaction.
+   * @dev totalSupply should be greater than 0.
    */
-  function checkTransferFromGiver(
-    address _target,
-    address _giver,
-    uint256 _tokenId
-  ) 
-    external
+  function checkTotalSupply(
+    address _target
+  )
+    internal
   {
-    ERC721(_target).transferFrom(_giver, address(this), _tokenId);
+    require(ERC721Enumerable(_target).totalSupply() > 0);
   }
+
+  /**
+   * @dev tokenByIndex(0) should not throw.
+   */
+  function checkZeroTokenByIndex(
+    address _target
+  )
+    internal
+  {
+    ERC721Enumerable(_target).tokenByIndex(0);
+  }
+}
+
+
+contract Stub1 is
+  ERC721TokenReceiver
+{
+  bytes4 constant MAGIC_ON_ERC721_RECEIVED = 0x150b7a02;
+
+  constructor() {}
   
   /**
    * @dev Receive token and map id to contract address (which is parsed from data).
@@ -597,8 +594,478 @@ contract Validator is ERC721TokenReceiver
     external
     returns(bytes4)
   {
-    require(ERC165(msg.sender).supportsInterface(ERC721ID));
-    contractToId[msg.sender] = _tokenId;
+    require(StringUtils.compare2(_data, "") == 0);
     return MAGIC_ON_ERC721_RECEIVED;
+  }
+
+  function transferToken(
+    address _contract,
+    uint256 _tokenId,
+    address _receiver
+  )
+    external
+  {
+    ERC721(_contract).transferFrom(ERC721(_contract).ownerOf(_tokenId), _receiver, _tokenId);
+  }
+}
+
+contract Stub2 is
+  ERC721TokenReceiver
+{
+  bytes4 constant MAGIC_ON_ERC721_RECEIVED = 0x150b7a02;
+  
+  /**
+   * @dev Receive token and map id to contract address (which is parsed from data).
+   */
+  function onERC721Received(
+    address _operator,
+    address _from,
+    uint256 _tokenId,
+    bytes _data
+  )
+    external
+    returns(bytes4)
+  {
+    require(StringUtils.compare2(_data, "ffff") == 0);
+   // bytes memory temp = bytes(_data);
+    //require(temp == bytes(0x0));
+    return MAGIC_ON_ERC721_RECEIVED;
+  }
+}
+
+contract Stub3 is
+  ERC721TokenReceiver
+{
+  bytes4 constant MAGIC_ON_ERC721_RECEIVED_FALSE = 0x150b7a0b;
+  
+  /**
+   * @dev Receive token and map id to contract address (which is parsed from data).
+   */
+  function onERC721Received(
+    address _operator,
+    address _from,
+    uint256 _tokenId,
+    bytes _data
+  )
+    external
+    returns(bytes4)
+  {
+    return MAGIC_ON_ERC721_RECEIVED_FALSE;
+  }
+}
+
+contract Stub4
+{
+  function test() {}
+}
+
+contract TokenValidator 
+{
+  constructor(
+    uint256 _caseId,
+    address _target,
+    uint256 _tokenId
+  ) 
+    public
+  {
+    if (_caseId == 1) { 
+      checkTokenUri(_target, _tokenId);
+      return;
+    } else if (_caseId == 2) {
+      checkBalanceBasedOnToken(_target, _tokenId);
+      return;
+    } else if (_caseId == 3) {
+      checkNotEmptyOwner(_target, _tokenId);
+      return;
+    } 
+    
+    assert(false);
+  }
+
+  /**
+   * @dev tokenURI(TEST_TOKEN_ID) should not throw.
+   */
+  function checkTokenUri(
+    address _target,
+    uint256 _tokenId
+  )
+    internal
+  {
+    ERC721Metadata(_target).tokenURI(_tokenId);
+  }
+
+  /**
+   * @dev balanceOf(ownerOf(TEST_TOKEN_ID) should be > 0.
+   */
+  function checkBalanceBasedOnToken(
+    address _target,
+    uint256 _tokenId
+  ) 
+    internal
+  {
+    require(ERC721(_target).balanceOf(ERC721(_target).ownerOf(_tokenId)) > 0);
+  }
+
+  /**
+   * @dev ownerOf(TEST_TOKEN_ID) should return an address > 0.
+   */
+  function checkNotEmptyOwner(
+    address _target,
+    uint256 _tokenId
+  ) 
+    internal
+  {
+    require(ERC721(_target).ownerOf(_tokenId) != address(0));
+  }
+}
+
+contract TransferValidator
+{ 
+  using SafeMath for uint256;
+  bytes4 constant MAGIC_ON_ERC721_RECEIVED = 0x150b7a02;
+  address constant stubAddress = 0x85A9916425960aA35B2a527D77C71855DC0215B3;
+
+  constructor(
+    uint256 _caseId,
+    address _target,
+    uint256 _tokenId,
+    address _giver
+  ) 
+    public 
+    payable
+  {
+    if (_caseId == 1) { 
+      checkTransferFromGiver(_target, _tokenId, _giver);
+      return;
+    } else if (_caseId == 2) {
+      getTokenFromGiver(_target, _giver, _tokenId);
+      checkBalanceOnTransfer(_target, _tokenId);
+      return;
+    } else if (_caseId == 3) {
+      getTokenFromGiver(_target, _giver, _tokenId);
+      checkTransferToZeroAddress(_target, _tokenId);
+      return;
+    } else if (_caseId == 4) {
+      getTokenFromGiver(_target, _giver, _tokenId);
+      checkSafeTransferCallBackData(_target, _tokenId);
+      return;
+    } else if (_caseId == 5) {
+      getTokenFromGiver(_target, _giver, _tokenId);
+      checkSafeTransferCallBack(_target, _tokenId);
+      return;
+    } else if (_caseId == 6) {
+      getTokenFromGiver(_target, _giver, _tokenId);
+      checkSafeTransferNoCallBack(_target, _tokenId);
+      return;
+    } else if (_caseId == 7) {
+      getTokenFromGiver(_target, _giver, _tokenId);
+      checkSafeTransferWrongMagicValue(_target, _tokenId);
+      return;
+    } else if (_caseId == 8) {
+      getTokenFromGiver(_target, _giver, _tokenId);
+      checkGetApproved(_target, _tokenId);
+      return;
+    } else if (_caseId == 9) {
+      getTokenFromGiver(_target, _giver, _tokenId);
+      checkApproveAndTransfer(_target, _tokenId);
+      return;
+    } else if (_caseId == 10) {
+      getTokenFromGiver(_target, _giver, _tokenId);
+      checkApprovalForAll(_target, _tokenId);
+      return;
+    } else if (_caseId == 11) {
+      getTokenFromGiver(_target, _giver, _tokenId);
+      checkApproveForAllAndTransfer(_target, _tokenId);
+      return;
+    } else if (_caseId == 12) {
+      getTokenFromGiver(_target, _giver, _tokenId);
+      checkZeroTokenOfOwnerByIndex(_target, _tokenId);
+      return;
+    } else if (_caseId == 13) {
+      getTokenFromGiver(_target, _giver, _tokenId);
+      checkOverflowTokenOfOwnerByIndex(_target, _tokenId);
+      return;
+    } 
+    
+    assert(false);
+  }
+
+  function getTokenFromGiver(
+    address _target,
+    address _giver,
+    uint256 _tokenId
+  )
+    private
+  {
+    Giver(_giver).getToken.value(1000000 ether)(_target, _tokenId);
+  }
+
+  /**
+   * @dev transferFrom giver to self, this should throw because giver does not authorize the 
+   * transaction.
+   */
+  function checkTransferFromGiver(
+    address _target,
+    uint256 _tokenId,
+    address _giver
+  ) 
+    internal
+  {
+    ERC721(_target).transferFrom(_giver, address(this), _tokenId);
+  }
+
+   /**
+   * @dev  Get a token from giver, transferFrom self to a stub, check balanceOf() stub before and 
+   * after transfer, it should be one more.
+   */
+  function checkBalanceOnTransfer(
+    address _target,
+    uint256 _tokenId
+  ) 
+    internal
+  {
+    uint256 balance = ERC721(_target).balanceOf(stubAddress);
+    ERC721(_target).transferFrom(address(this), stubAddress, _tokenId);
+    require(ERC721(_target).balanceOf(stubAddress) == balance.add(1));
+  }
+  /**
+   * @dev Get a token from giver, transferFrom to zero address, should throw.
+   */
+  function checkTransferToZeroAddress(
+    address _target,
+    uint256 _tokenId
+  ) 
+    internal
+  {
+    ERC721(_target).transferFrom(address(this), address(0), _tokenId);
+  }
+
+  /**
+   * @dev Get a token from giver, safe transfer to stub by sending data ffff. Stub throws in 
+   * callback if it does not receive ffff.
+   */
+  function checkSafeTransferCallBackData(
+    address _target,
+    uint256 _tokenId
+  ) 
+    internal
+  {
+    Stub2 stub = new Stub2();
+    ERC721(_target).safeTransferFrom(address(this), stub, _tokenId, "ffff");
+  }
+
+  /**
+   * @dev Get a token from giver, safe transfer to stub using the default argument. Stub throws in 
+   * callback if it does not receive "".
+   */
+  function checkSafeTransferCallBack(
+    address _target,
+    uint256 _tokenId
+  ) 
+    internal
+  {
+    Stub1 stub = new Stub1();
+    ERC721(_target).safeTransferFrom(address(this), stub, _tokenId);
+  }
+
+  /**
+   * @dev Get a token from giver, safe transfer to contract stud that does not implement token
+   * receiver, should throw. 
+   */
+  function checkSafeTransferNoCallBack(
+    address _target,
+    uint256 _tokenId
+  ) 
+    internal
+  {
+    Stub4 stub = new Stub4();
+    ERC721(_target).safeTransferFrom(address(this), stub, _tokenId, "ffff");
+  }
+
+  /**
+   * @dev Get a token from giver, safe transfer to stub using the default argument. Stub throws in 
+   * callback if it does not receive "".
+   */
+  function checkSafeTransferWrongMagicValue(
+    address _target,
+    uint256 _tokenId
+  ) 
+    internal
+  {
+    Stub3 stub = new Stub3();
+    ERC721(_target).safeTransferFrom(address(this), stub, _tokenId);
+  }
+
+  /**
+   * @dev Get a token from giver, approve stub, then check getApproved stub;
+   */
+  function checkGetApproved(
+    address _target,
+    uint256 _tokenId
+  ) 
+    internal
+  {
+    ERC721(_target).approve(stubAddress, _tokenId);
+    require(ERC721(_target).getApproved(_tokenId) == stubAddress);
+  }
+
+  /**
+   * @dev Get a token from giver, approve stub, then check getApproved stub;
+   */
+  function checkApproveAndTransfer(
+    address _target,
+    uint256 _tokenId
+  ) 
+    internal
+  {
+    Stub1 stub = new Stub1();
+    ERC721(_target).approve(stub, _tokenId);
+    uint256 balance = ERC721(_target).balanceOf(stubAddress);
+    stub.transferToken(_target, _tokenId, stubAddress);
+    require(ERC721(_target).balanceOf(stubAddress) == balance.add(1));
+  }
+
+  /**
+   * @dev Get a token from giver, approveForAll to stub, then check isApprovedForAll.
+   */
+  function checkApprovalForAll(
+    address _target,
+    uint256 _tokenId
+  ) 
+    internal
+  {
+    ERC721(_target).setApprovalForAll(stubAddress, true);
+    require(ERC721(_target).isApprovedForAll(address(this), stubAddress));
+  }
+
+  /**
+   * @dev Get a token from giver, approveFor All to stub, then have stub transferFrom to stub2.
+   */
+  function checkApproveForAllAndTransfer(
+    address _target,
+    uint256 _tokenId
+  ) 
+    internal
+  {
+    Stub1 stub = new Stub1(); 
+    ERC721(_target).setApprovalForAll(stub, true);
+    uint256 balance = ERC721(_target).balanceOf(stubAddress);
+    stub.transferToken(_target, _tokenId, stubAddress);
+    require(ERC721(_target).balanceOf(stubAddress) == balance.add(1));
+  }
+
+  /**
+   * @dev Get token from giver, find balanceOf(self), tokenOfOwnerByIndex(0) should not throw.
+   */
+  function checkZeroTokenOfOwnerByIndex(
+    address _target,
+    uint256 _tokenId
+  )
+    internal
+  {
+    require(ERC721(_target).balanceOf(address(this)) > 0);
+    ERC721Enumerable(_target).tokenOfOwnerByIndex(address(this), 0);
+  }
+
+  /**
+   * @dev Get token from giver, find balanceOf(self), tokenOfOwnerByIndex(balanceOf(self)) should 
+   * throw.
+   */
+  function checkOverflowTokenOfOwnerByIndex(
+    address _target,
+    uint256 _tokenId
+  )
+    internal
+  {
+    uint256 balance = ERC721(_target).balanceOf(address(this));
+    ERC721Enumerable(_target).tokenOfOwnerByIndex(address(this), balance);
+  }
+}
+
+library StringUtils {
+  /// @dev Does a byte-by-byte lexicographical comparison of two strings.
+  /// @return a negative number if `_a` is smaller, zero if they are equal
+  /// and a positive numbe if `_b` is smaller.
+  function compare(string _a, string _b) internal returns (int) {
+    bytes memory a = bytes(_a);
+    bytes memory b = bytes(_b);
+    uint minLength = a.length;
+    if (b.length < minLength) minLength = b.length;
+    //@todo unroll the loop into increments of 32 and do full 32 byte comparisons
+    for (uint i = 0; i < minLength; i ++)
+      if (a[i] < b[i])
+        return -1;
+      else if (a[i] > b[i]) return 1;
+    if (a.length < b.length)
+      return -1;
+    else if (a.length > b.length)
+      return 1;
+    else
+      return 0;
+  }
+  
+  function compare2(bytes _a, string _b) internal returns (int) {
+    bytes memory a = _a;
+    bytes memory b = bytes(_b);
+    uint minLength = a.length;
+    if (b.length < minLength) minLength = b.length;
+    //@todo unroll the loop into increments of 32 and do full 32 byte comparisons
+    for (uint i = 0; i < minLength; i ++)
+      if (a[i] < b[i])
+        return -1;
+      else if (a[i] > b[i]) return 1;
+    if (a.length < b.length)
+      return -1;
+    else if (a.length > b.length)
+      return 1;
+    else
+      return 0;
+  }
+  /// @dev Compares two strings and returns true iff they are equal.
+  function equal(string _a, string _b) internal returns (bool) {
+    return compare(_a, _b) == 0;
+  }
+  
+  /// @dev Finds the index of the first occurrence of _needle in _haystack
+  function indexOf(string _haystack, string _needle) internal returns (int)
+  {
+    bytes memory h = bytes(_haystack);
+    bytes memory n = bytes(_needle);
+    if(h.length < 1 || n.length < 1 || (n.length > h.length)) 
+      return -1;
+    else if(h.length > (2**128 -1)) // since we have to be able to return -1 (if the char isn't found or input error), this function must return an "int" type with a max length of (2^128 - 1)
+      return -1;									
+    else
+    {
+      uint subindex = 0;
+      for (uint i = 0; i < h.length; i ++)
+      {
+        if (h[i] == n[0]) // found the first char of b
+        {
+          subindex = 1;
+          while(subindex < n.length && (i + subindex) < h.length && h[i + subindex] == n[subindex]) // search until the chars don't match or until we reach the end of a or b
+          {
+            subindex++;
+          }	
+          if(subindex == n.length)
+            return int(i);
+        }
+      }
+      return -1;
+    }	
+  }
+}
+
+contract Giver
+{
+  function getToken(
+    address _contract,
+    uint256 _tokenId
+  )
+    external
+    payable
+  {
+    require(msg.value >= 1000000 ether);
+    ERC721(_contract).transferFrom(ERC721(_contract).ownerOf(_tokenId), msg.sender, _tokenId);
   }
 }
