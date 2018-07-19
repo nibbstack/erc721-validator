@@ -10,42 +10,6 @@ export default {
   ABI_TRANSFER: JSON.parse('[{"inputs":[{"name":"_caseId","type":"uint256"},{"name":"_target","type":"address"},{"name":"_tokenId","type":"uint256"},{"name":"_giver","type":"address"}],"payable":true,"stateMutability":"payable","type":"constructor"}]'),
 
   /**
-   * Tests Data.
-   */
-  TESTS_BASIC: [
-    {id: 1, expected: true, condition: null, description: 'Sanity checks Find the amount of value (ether) assigned to CONTRACT_ADDRESS, it should be greater than or equal to zero. Find the code_size of CONTRACT_ADDRESS, it should be greater than zero.'},
-    {id: 2, expected: true, condition: {'1': true}, description: 'Check interface 165.'},
-    {id: 3, expected: true, condition: {'2': true}, description: 'Check interface ERC721.'},
-    {id: 4, expected: null, condition: {'3': true}, description: 'Check interface ERC721Metadata.'},
-    {id: 5, expected: null, condition: {'3': true}, description: 'Check interface ERC721Enumerable.'},
-    {id: 6, expected: false, condition: {'2': true}, description: 'balanceOf(0) should throw.'},
-    {id: 7, expected: true, condition: {'4': true}, description: 'name() should not throw.'},
-    {id: 8, expected: true, condition: {'4': true}, description: 'symbol() should not throw.'},
-    {id: 9, expected: true, condition: {'5': true}, description: 'totalSupply should be greater than 0.'},
-    {id: 10, expected: true, condition: {'5': true}, description: 'tokenByIndex(0) should not throw.'}
-  ],
-  TESTS_TOKEN: [
-    {id: 1, expected: true, condition: {'4': true}, description: 'tokenURI(TEST_TOKEN_ID) should not throw.'},
-    {id: 2, expected: true, condition: {'3': true}, description: 'balanceOf(ownerOf(TEST_TOKEN_ID) should be > 0'},
-    {id: 3, expected: true, condition: {'3': true}, description: 'ownerOf(TEST_TOKEN_ID) should return an address > 0.'}
-  ],
-  TESTS_TRANSFER: [
-    {id: 1, expected: false, condition: {'3': true}, description: 'transferFrom giver to self, this should throw because giver does not authorize the transaction.'},
-    {id: 2, expected: true, condition: {'3': true}, description: 'Get a token from giver, transferFrom self to a stub, check balanceOf() stub before and after transfer, it should be one more.'},
-    {id: 3, expected: false, condition: {'3': true}, description: 'Get a token from giver, transferFrom to zero address, should throw.'},
-    {id: 4, expected: true, condition: {'3': true}, description: 'Get a token from giver, safe transfer to stub by sending data ffff. Stub throws in callback if it does not receive ffff.'},
-    {id: 5, expected: true, condition: {'3': true}, description: 'Get a token from giver, safe transfer to stub using the default argument. Stub throws in callback if it does not receive "".'},
-    {id: 6, expected: false, condition: {'3': true}, description: 'Get a token from giver, safe transfer to contract stud that does not implement token receiver, should throw.'},
-    {id: 7, expected: false, condition: {'3': true}, description: 'Get a token from giver, safe transfer to stub, the stub does not return the correct magic value, the transfer must throw.'},
-    {id: 8, expected: true, condition: {'3': true}, description: 'Get a token from giver, approve stub, then check getApproved stub.'},
-    {id: 9, expected: true, condition: {'3': true}, description: 'Get a token from giver, approve stub, then have stub transferFrom to stub2.'},
-    {id: 10, expected: true, condition: {'3': true}, description: 'Get a token from giver, approveForAll to stub, then check isApprovedForAll.	Tester must approve Giver contract for the specific token.'},
-    {id: 11, expected: true, condition: {'3': true}, description: 'Get a token from giver, approveFor All to stub, then have stub transferFrom to stub2.'},
-    {id: 12, expected: true, condition: {'5': true}, description: 'Get token from giver, find balanceOf(self), tokenOfOwnerByIndex(0) should not throw.'},
-    {id: 13, expected: false, condition: {'5': true}, description: 'Get token from giver, find balanceOf(self), tokenOfOwnerByIndex(balanceOf(self)) should throw.'}
-  ],
-
-  /**
    * Validator Data.
    */
   DATA_BASIC: '0x608060405234801561001057600080fd5b506040516040806106d483398101604052805160209091015160018214156100495761004481640100000000610145810204565b61013e565b81600214156100645761004481640100000000610187810204565b816003141561007f5761004481640100000000610226810204565b816004141561009a57610044816401000000006102aa810204565b81600514156100b5576100448164010000000061032e810204565b81600614156100d057610044816401000000006103b2810204565b81600714156100eb5761004481640100000000610456810204565b81600814156101065761004481640100000000610538810204565b8160091415610121576100448164010000000061058f810204565b81600a141561013c576100448164010000000061061e810204565bfe5b5050610689565b6000600160a060020a03821631101561015d57600080fd5b61017c600160a060020a03821664010000000061000961068182021704565b151561018457fe5b50565b604080517f01ffc9a70000000000000000000000000000000000000000000000000000000080825260048201529051600091600160a060020a038416916301ffc9a79160248082019260209290919082900301818787803b1580156101eb57600080fd5b505af11580156101ff573d6000803e3d6000fd5b505050506040513d602081101561021557600080fd5b5051905080151561022257fe5b5050565b604080517f01ffc9a70000000000000000000000000000000000000000000000000000000081527f80ac58cd0000000000000000000000000000000000000000000000000000000060048201529051600091600160a060020a038416916301ffc9a79160248082019260209290919082900301818787803b1580156101eb57600080fd5b604080517f01ffc9a70000000000000000000000000000000000000000000000000000000081527f5b5e139f0000000000000000000000000000000000000000000000000000000060048201529051600091600160a060020a038416916301ffc9a79160248082019260209290919082900301818787803b1580156101eb57600080fd5b604080517f01ffc9a70000000000000000000000000000000000000000000000000000000081527f780e9d630000000000000000000000000000000000000000000000000000000060048201529051600091600160a060020a038416916301ffc9a79160248082019260209290919082900301818787803b1580156101eb57600080fd5b80600160a060020a03166370a0823160006040518263ffffffff167c01000000000000000000000000000000000000000000000000000000000281526004018082600160a060020a0316600160a060020a03168152602001915050602060405180830381600087803b15801561042757600080fd5b505af115801561043b573d6000803e3d6000fd5b505050506040513d602081101561045157600080fd5b505050565b80600160a060020a03166306fdde036040518163ffffffff167c0100000000000000000000000000000000000000000000000000000000028152600401600060405180830381600087803b1580156104ad57600080fd5b505af11580156104c1573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405260208110156104ea57600080fd5b81019080805164010000000081111561050257600080fd5b8201602081018481111561051557600080fd5b815164010000000081118282018710171561052f57600080fd5b50505050505050565b80600160a060020a03166395d89b416040518163ffffffff167c0100000000000000000000000000000000000000000000000000000000028152600401600060405180830381600087803b1580156104ad57600080fd5b600081600160a060020a03166318160ddd6040518163ffffffff167c0100000000000000000000000000000000000000000000000000000000028152600401602060405180830381600087803b1580156105e857600080fd5b505af11580156105fc573d6000803e3d6000fd5b505050506040513d602081101561061257600080fd5b50511161018457600080fd5b80600160a060020a0316634f6ccce760006040518263ffffffff167c010000000000000000000000000000000000000000000000000000000002815260040180828152602001915050602060405180830381600087803b15801561042757600080fd5b6000903b1190565b603d806106976000396000f3006080604052600080fd5b6000903b11905600a165627a7a72305820611426532d2d26e742833ab1dd701eafa7f06dfe44120d054afd09678a302b820029',

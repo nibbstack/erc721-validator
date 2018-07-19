@@ -5,7 +5,7 @@ import { Model } from 'rawmodel';
 /**
  * Ethereum contract validator.
  */
-export class Validator extends Model {
+export class ERC721Validator extends Model {
   protected web3: Web3;
 
   /**
