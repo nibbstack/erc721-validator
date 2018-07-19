@@ -38,7 +38,7 @@ export class ERC721Validator extends Model {
       }
       try {
         const validator = (this.web3.eth as any).Contract(codes.ABI_BASIC);
-        const results = [];
+        // const results = [];
 
         await validator
           .deploy({

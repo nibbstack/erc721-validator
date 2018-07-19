@@ -1,5 +1,5 @@
 {
-  "name": "erc721-validator",
+  "name": "@0xcert/erc721-validator",
   "version": "0.1.0",
   "description": "ERC-721 token validator.",
   "main": "./dist/index.js",
