@@ -656,7 +656,7 @@ contract Stub3 is
 
 contract Stub4
 {
-  function test() {}
+  function test() public pure {}
 }
 
 contract TokenValidator 
@@ -786,7 +786,7 @@ contract TransferValidator
       checkOverflowTokenOfOwnerByIndex(_target, _tokenId);
       return;
     } 
-    
+
     assert(false);
   }
 
