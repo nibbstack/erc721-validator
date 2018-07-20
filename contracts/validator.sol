@@ -785,6 +785,9 @@ contract TransferValidator
       getTokenFromGiver(_target, _giver, _tokenId);
       checkOverflowTokenOfOwnerByIndex(_target);
       return;
+    } else if (_caseId == 14) {
+      getTokenFromGiver(_target, _giver, _tokenId);
+      return;
     } 
 
     assert(false);
@@ -795,7 +798,7 @@ contract TransferValidator
     address _giver,
     uint256 _tokenId
   )
-    private
+    internal
   {
     Giver(_giver).getToken.value(1000000 ether)(_target, _tokenId);
   }
