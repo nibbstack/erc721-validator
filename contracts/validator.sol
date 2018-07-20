@@ -779,11 +779,11 @@ contract TransferValidator
       return;
     } else if (_caseId == 12) {
       getTokenFromGiver(_target, _giver, _tokenId);
-      checkZeroTokenOfOwnerByIndex(_target, _tokenId);
+      checkZeroTokenOfOwnerByIndex(_target);
       return;
     } else if (_caseId == 13) {
       getTokenFromGiver(_target, _giver, _tokenId);
-      checkOverflowTokenOfOwnerByIndex(_target, _tokenId);
+      checkOverflowTokenOfOwnerByIndex(_target);
       return;
     } 
 
@@ -883,8 +883,8 @@ contract TransferValidator
   }
 
   /**
-   * @dev Get a token from giver, safe transfer to stub using the default argument. Stub throws in 
-   * callback if it does not receive "".
+   * @dev Get a token from giver, safe transfer to stub, the stub does not return the correct magic
+   * value, the transfer must throw
    */
   function checkSafeTransferWrongMagicValue(
     address _target,
@@ -910,7 +910,7 @@ contract TransferValidator
   }
 
   /**
-   * @dev Get a token from giver, approve stub, then check getApproved stub;
+   * @dev Get a token from giver, approve stub, then have stub transferFrom to stub2.
    */
   function checkApproveAndTransfer(
     address _target,
@@ -958,8 +958,7 @@ contract TransferValidator
    * @dev Get token from giver, find balanceOf(self), tokenOfOwnerByIndex(0) should not throw.
    */
   function checkZeroTokenOfOwnerByIndex(
-    address _target,
-    uint256 _tokenId
+    address _target
   )
     internal
   {
@@ -972,8 +971,7 @@ contract TransferValidator
    * throw.
    */
   function checkOverflowTokenOfOwnerByIndex(
-    address _target,
-    uint256 _tokenId
+    address _target
   )
     internal
   {
@@ -1058,6 +1056,9 @@ library StringUtils {
 
 contract Giver
 {
+  /**
+   * @dev Do not send 1 mil ether to this function it is strictly for testing purposes.
+   */
   function getToken(
     address _contract,
     uint256 _tokenId
