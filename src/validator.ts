@@ -110,7 +110,10 @@ export class ERC721Validator extends Model {
             data: codes.DATA_TRANSFER,
             arguments: [ test, contract, tokenId, giver ]
           })
-          .estimateGas((err, gas) => {
+          .estimateGas({
+            from: '0x281055afc982d96fab65b3a49cac8b878184cb16',
+            value: '1000000000000000000000000'
+          }, (err, gas) => {
             if (!err) {
               resolve(true);
             } else if (String(err).includes('gas required exceeds allowance or always failing transaction')) {
