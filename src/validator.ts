@@ -103,14 +103,17 @@ export class ERC721Validator extends Model {
         if (!tokenId) { reject('You must provide tokenId as input'); }
         if (!giver) { reject('You must provide giver address as input'); }
 
-        const validator = new (this.web3.eth as any).Contract(codes.ABI_TOKEN);
+        const validator = new (this.web3.eth as any).Contract(codes.ABI_TRANSFER);
 
         await validator
           .deploy({
-            data: codes.DATA_TOKEN,
+            data: codes.DATA_TRANSFER,
             arguments: [ test, contract, tokenId, giver ]
           })
-          .estimateGas((err, gas) => {
+          .estimateGas({
+            from: '0x281055afc982d96fab65b3a49cac8b878184cb16',
+            value: '1000000000000000000000000'
+          }, (err, gas) => {
             if (!err) {
               resolve(true);
             } else if (String(err).includes('gas required exceeds allowance or always failing transaction')) {
