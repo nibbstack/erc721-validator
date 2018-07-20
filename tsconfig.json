@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "noImplicitAny": false,
+    "removeComments": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "declaration": true,
+    "strictNullChecks": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "moduleResolution": "node",
+    "inlineSources": true
+  },
+  "include": [
+    "src/**/*",
+    "./node_modules/web3-typescript-typings/index.d.ts"
+  ]
+}
