@@ -1,6 +1,6 @@
 <img src="assets/cover.png" />
 
-![Build Status](https://travis-ci.org/0xcert/erc721-validator.svg?branch=master)&nbsp;[![npm version](https://badge.fury.io/js/%400xcert%2Ferc721-validator.svg)](https://badge.fury.io/js/%400xcert%2Ferc721-validator)&nbsp;[![Dependency Status](https://gemnasium.com/0xcert/erc721-validator.svg)](https://gemnasium.com/0xcert/erc721-validator)
+![Build Status](https://travis-ci.org/0xcert/erc721-validator.svg?branch=master)&nbsp;[![npm version](https://badge.fury.io/js/%400xcert%2Ferc721-validator.svg)](https://badge.fury.io/js/%400xcert%2Ferc721-validator)&nbsp;[![Dependency Status](https://gemnasium.com/0xcert/erc721-validator.svg)](https://gemnasium.com/0xcert/erc721-validator) [![Greenkeeper badge](https://badges.greenkeeper.io/0xcert/erc721-validator.svg)](https://greenkeeper.io/)
 
 > Ethereum ERC-721 Contract Validator.
 
