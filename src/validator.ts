@@ -47,7 +47,7 @@ export class ERC721Validator extends Model {
           .estimateGas((err, gas) => {
             if (!err) {
               resolve(true);
-            } else if (String(err).includes('gas required exceeds allowance or always failing transaction')) {
+            } else if (String(err).includes('always failing transaction')) {
               resolve(false);
             } else {
               resolve(err);
@@ -79,7 +79,7 @@ export class ERC721Validator extends Model {
           .estimateGas((err, gas) => {
             if (!err) {
               resolve(true);
-            } else if (String(err).includes('gas required exceeds allowance or always failing transaction')) {
+            } else if (String(err).includes('always failing transaction')) {
               resolve(false);
             } else {
               resolve(err);
@@ -116,7 +116,7 @@ export class ERC721Validator extends Model {
           }, (err, gas) => {
             if (!err) {
               resolve(true);
-            } else if (String(err).includes('gas required exceeds allowance or always failing transaction')) {
+            } else if (String(err).includes('always failing transaction')) {
               resolve(false);
             } else {
               resolve(err);
