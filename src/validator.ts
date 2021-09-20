@@ -45,7 +45,9 @@ export class ERC721Validator {
           .estimateGas((err, gas) => {
             if (!err) {
               resolve(true);
-            } else if (String(err).includes('always failing transaction')) {
+            } else if (String(err).includes('always failing transaction')
+             || String(err).includes('execution reverted')
+            ) {
               resolve(false);
             } else {
               resolve(err);
