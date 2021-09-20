@@ -8,6 +8,10 @@ This is an open source package for NodeJS written with [TypeScript](https://www.
 
 This package is actively maintained, well tested and already used in production environments. The source code is available on [GitHub](https://github.com/0xcert/erc721-validator) where you can also find our [issue tracker](https://github.com/0xcert/erc721-validator/issues).
 
+## How it works
+
+For more information on how the validator works please check the [article explaining the technique](https://medium.com/hackernoon/https-medium-com-momannn-live-testing-smart-contracts-with-estimategas-f45429086c3a). 
+
 ## Installation
 
 Run the command below to install the package.

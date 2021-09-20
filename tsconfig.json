@@ -11,7 +11,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": false,
     "moduleResolution": "node",
-    "inlineSources": true
+    "inlineSources": true,
+    "esModuleInterop": true
   },
   "include": [
     "src/**/*",
