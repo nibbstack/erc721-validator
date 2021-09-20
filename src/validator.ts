@@ -50,7 +50,6 @@ export class ERC721Validator {
             ) {
               resolve(false);
             } else {
-              console.log('here');
               resolve(err);
             }
           });
