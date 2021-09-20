@@ -1,11 +1,10 @@
-import * as Web3 from 'web3';
+import Web3 from 'web3';
 import codes from './config/codes';
-import { Model } from 'rawmodel';
 
 /**
  * Ethereum contract validator.
  */
-export class ERC721Validator extends Model {
+export class ERC721Validator {
   protected web3: Web3;
 
   /**
@@ -13,7 +12,6 @@ export class ERC721Validator extends Model {
    * @param {Web3} web3 Instance of Ethereum client.
    */
   public constructor(web3: Web3) {
-    super();
     this.defineWeb3(web3);
   }
 
@@ -111,7 +109,7 @@ export class ERC721Validator extends Model {
             arguments: [ test, contract, tokenId, giver ]
           })
           .estimateGas({
-            from: '0x281055afc982d96fab65b3a49cac8b878184cb16',
+            from: '0xbe0eb53f46cd790cd13851d5eff43d12404d33e8',
             value: '1000000000000000000000000'
           }, (err, gas) => {
             if (!err) {

@@ -1,7 +1,7 @@
 import * as solc from 'solc';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as Web3 from 'web3';
+const Web3 = require('web3')
 
 const web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/1jm7FU1sXc0lHFEYr83f'));
 const eth: any = web3.eth;

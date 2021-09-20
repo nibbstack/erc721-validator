@@ -1,86 +1,6 @@
-pragma solidity ^0.4.24;
+// SPDX-License-Identifier: MIT
 
-/**
- * @dev Math operations with safety checks that throw on error. This contract is based
- * on the source code at https://goo.gl/iyQsmU.
- */
-library SafeMath {
-
-  /**
-   * @dev Multiplies two numbers, throws on overflow.
-   * @param _a Factor number.
-   * @param _b Factor number.
-   */
-  function mul(
-    uint256 _a,
-    uint256 _b
-  )
-    internal
-    pure
-    returns (uint256)
-  {
-    if (_a == 0) {
-      return 0;
-    }
-    uint256 c = _a * _b;
-    assert(c / _a == _b);
-    return c;
-  }
-
-  /**
-   * @dev Integer division of two numbers, truncating the quotient.
-   * @param _a Dividend number.
-   * @param _b Divisor number.
-   */
-  function div(
-    uint256 _a,
-    uint256 _b
-  )
-    internal
-    pure
-    returns (uint256)
-  {
-    uint256 c = _a / _b;
-    // assert(b > 0); // Solidity automatically throws when dividing by 0
-    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
-    return c;
-  }
-
-  /**
-   * @dev Substracts two numbers, throws on overflow (i.e. if subtrahend is greater than minuend).
-   * @param _a Minuend number.
-   * @param _b Subtrahend number.
-   */
-  function sub(
-    uint256 _a,
-    uint256 _b
-  )
-    internal
-    pure
-    returns (uint256)
-  {
-    assert(_b <= _a);
-    return _a - _b;
-  }
-
-  /**
-   * @dev Adds two numbers, throws on overflow.
-   * @param _a Number.
-   * @param _b Number.
-   */
-  function add(
-    uint256 _a,
-    uint256 _b
-  )
-    internal
-    pure
-    returns (uint256)
-  {
-    uint256 c = _a + _b;
-    assert(c >= _a);
-    return c;
-  }
-}
+pragma solidity ^0.8.7;
 
 /**
  * @dev Utility library of inline functions on addresses.
@@ -96,19 +16,19 @@ library AddressUtils {
   )
     internal
     view
-    returns (bool)
+    returns (bool addressCheck)
   {
-    uint256 size;
+    // This method relies in extcodesize, which returns 0 for contracts in
+    // construction, since the code is only stored at the end of the
+    // constructor execution.
 
-    /**
-     * XXX Currently there is no better way to check if there is a contract in an address than to
-     * check the size of the code at that address.
-     * See https://ethereum.stackexchange.com/a/14016/36603 for more details about how this works.
-     * TODO: Check this again before the Serenity release, because all addresses will be
-     * contracts then.
-     */
-    assembly { size := extcodesize(_addr) } // solium-disable-line security/no-inline-assembly
-    return size > 0;
+    // According to EIP-1052, 0x0 is the value returned for not-yet created accounts
+    // and 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 is returned
+    // for accounts without code, i.e. `keccak256('')`
+    bytes32 codehash;
+    bytes32 accountHash = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
+    assembly { codehash := extcodehash(_addr) } // solhint-disable-line
+    addressCheck = (codehash != 0x0 && codehash != accountHash);
   }
 
 }
@@ -191,7 +111,7 @@ interface ERC721 {
     address _from,
     address _to,
     uint256 _tokenId,
-    bytes _data
+    bytes calldata _data
   )
     external;
 
@@ -335,7 +255,7 @@ interface ERC721Metadata {
   function name()
     external
     view
-    returns (string _name);
+    returns (string memory _name);
 
   /**
    * @dev Returns a abbreviated name for a collection of NFTs in this contract.
@@ -343,7 +263,7 @@ interface ERC721Metadata {
   function symbol()
     external
     view
-    returns (string _symbol);
+    returns (string memory _symbol);
 
   /**
    * @dev Returns a distinct Uniform Resource Identifier (URI) for a given asset. It Throws if
@@ -353,7 +273,7 @@ interface ERC721Metadata {
   function tokenURI(uint256 _tokenId)
     external
     view
-    returns (string);
+    returns (string memory);
 
 }
 
@@ -378,7 +298,7 @@ interface ERC721TokenReceiver {
     address _operator,
     address _from,
     uint256 _tokenId,
-    bytes _data
+    bytes calldata _data
   )
     external
     returns(bytes4);
@@ -408,7 +328,6 @@ interface ERC165 {
 contract BasicValidator
 {
   using AddressUtils for address;
-  using SafeMath for uint256;
 
   bytes4 constant ERC165ID = 0x01ffc9a7;
   bytes4 constant ERC721ID = 0x80ac58cd;
@@ -419,7 +338,6 @@ contract BasicValidator
     uint256 _caseId,
     address _target
   ) 
-    public 
   {
     if (_caseId == 1) { 
       sanityCheck(_target);
@@ -589,8 +507,9 @@ contract Stub1 is
     address _operator,
     address _from,
     uint256 _tokenId,
-    bytes _data
+    bytes calldata _data
   )
+    override
     external
     returns(bytes4)
   {
@@ -621,8 +540,9 @@ contract Stub2 is
     address _operator,
     address _from,
     uint256 _tokenId,
-    bytes _data
+    bytes calldata _data
   )
+  override
     external
     returns(bytes4)
   {
@@ -645,8 +565,9 @@ contract Stub3 is
     address _operator,
     address _from,
     uint256 _tokenId,
-    bytes _data
+    bytes calldata _data
   )
+    override
     external
     returns(bytes4)
   {
@@ -666,7 +587,6 @@ contract TokenValidator
     address _target,
     uint256 _tokenId
   ) 
-    public
   {
     if (_caseId == 1) { 
       checkTokenUri(_target, _tokenId);
@@ -721,7 +641,6 @@ contract TokenValidator
 
 contract TransferValidator
 { 
-  using SafeMath for uint256;
   bytes4 constant MAGIC_ON_ERC721_RECEIVED = 0x150b7a02;
   address constant stubAddress = 0x85A9916425960aA35B2a527D77C71855DC0215B3;
 
@@ -731,7 +650,6 @@ contract TransferValidator
     uint256 _tokenId,
     address _giver
   ) 
-    public 
     payable
   {
     if (_caseId == 1) { 
@@ -800,7 +718,7 @@ contract TransferValidator
   )
     internal
   {
-    Giver(_giver).getToken.value(1000000 ether)(_target, _tokenId);
+    Giver(_giver).getToken{value:1000000 ether}(_target, _tokenId);
   }
 
   /**
@@ -829,7 +747,7 @@ contract TransferValidator
   {
     uint256 balance = ERC721(_target).balanceOf(stubAddress);
     ERC721(_target).transferFrom(address(this), stubAddress, _tokenId);
-    require(ERC721(_target).balanceOf(stubAddress) == balance.add(1));
+    require(ERC721(_target).balanceOf(stubAddress) == balance + 1);
   }
   /**
    * @dev Get a token from giver, transferFrom to zero address, should throw.
@@ -854,7 +772,7 @@ contract TransferValidator
     internal
   {
     Stub2 stub = new Stub2();
-    ERC721(_target).safeTransferFrom(address(this), stub, _tokenId, "ffff");
+    ERC721(_target).safeTransferFrom(address(this), address(stub), _tokenId, "ffff");
   }
 
   /**
@@ -868,7 +786,7 @@ contract TransferValidator
     internal
   {
     Stub1 stub = new Stub1();
-    ERC721(_target).safeTransferFrom(address(this), stub, _tokenId);
+    ERC721(_target).safeTransferFrom(address(this), address(stub), _tokenId);
   }
 
   /**
@@ -882,7 +800,7 @@ contract TransferValidator
     internal
   {
     Stub4 stub = new Stub4();
-    ERC721(_target).safeTransferFrom(address(this), stub, _tokenId, "ffff");
+    ERC721(_target).safeTransferFrom(address(this), address(stub), _tokenId, "ffff");
   }
 
   /**
@@ -896,7 +814,7 @@ contract TransferValidator
     internal
   {
     Stub3 stub = new Stub3();
-    ERC721(_target).safeTransferFrom(address(this), stub, _tokenId);
+    ERC721(_target).safeTransferFrom(address(this), address(stub), _tokenId);
   }
 
   /**
@@ -922,10 +840,10 @@ contract TransferValidator
     internal
   {
     Stub1 stub = new Stub1();
-    ERC721(_target).approve(stub, _tokenId);
+    ERC721(_target).approve(address(stub), _tokenId);
     uint256 balance = ERC721(_target).balanceOf(stubAddress);
     stub.transferToken(_target, _tokenId, stubAddress);
-    require(ERC721(_target).balanceOf(stubAddress) == balance.add(1));
+    require(ERC721(_target).balanceOf(stubAddress) == balance + 1);
   }
 
   /**
@@ -951,10 +869,10 @@ contract TransferValidator
     internal
   {
     Stub1 stub = new Stub1(); 
-    ERC721(_target).setApprovalForAll(stub, true);
+    ERC721(_target).setApprovalForAll(address(stub), true);
     uint256 balance = ERC721(_target).balanceOf(stubAddress);
     stub.transferToken(_target, _tokenId, stubAddress);
-    require(ERC721(_target).balanceOf(stubAddress) == balance.add(1));
+    require(ERC721(_target).balanceOf(stubAddress) == balance + 1);
   }
 
   /**
@@ -987,7 +905,7 @@ library StringUtils {
   /// @dev Does a byte-by-byte lexicographical comparison of two strings.
   /// @return a negative number if `_a` is smaller, zero if they are equal
   /// and a positive numbe if `_b` is smaller.
-  function compare(string _a, string _b) internal returns (int) {
+  function compare(string memory _a, string memory _b) internal returns (int) {
     bytes memory a = bytes(_a);
     bytes memory b = bytes(_b);
     uint minLength = a.length;
@@ -1005,7 +923,7 @@ library StringUtils {
       return 0;
   }
   
-  function compare2(bytes _a, string _b) internal returns (int) {
+  function compare2(bytes memory _a, string memory _b) internal returns (int) {
     bytes memory a = _a;
     bytes memory b = bytes(_b);
     uint minLength = a.length;
@@ -1023,12 +941,12 @@ library StringUtils {
       return 0;
   }
   /// @dev Compares two strings and returns true iff they are equal.
-  function equal(string _a, string _b) internal returns (bool) {
+  function equal(string memory _a, string memory _b) internal returns (bool) {
     return compare(_a, _b) == 0;
   }
   
   /// @dev Finds the index of the first occurrence of _needle in _haystack
-  function indexOf(string _haystack, string _needle) internal returns (int)
+  function indexOf(string memory _haystack, string memory _needle) internal returns (int)
   {
     bytes memory h = bytes(_haystack);
     bytes memory n = bytes(_needle);

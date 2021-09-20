@@ -1,6 +1,6 @@
 {
   "name": "@0xcert/erc721-validator",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "ERC-721 token validator.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -39,21 +39,21 @@
     "solidity"
   ],
   "dependencies": {
-    "@types/node": "^10.5.2",
-    "rawmodel": "^1.31.2"
+    "@types/node": "^16.9.4"
   },
   "peerDependencies": {
-    "web3": "^1.0.0-beta.34"
+    "web3": "^1.5.2"
   },
   "devDependencies": {
-    "@types/mocha": "5.0.0",
-    "mocha": "5.0.5",
-    "solc": "^0.4.21",
-    "ts-node": "^3.3.0",
-    "tslint": "^5.7.0",
-    "tslint-config-standard": "^6.0.1",
-    "typescript": "^2.8.0",
-    "web3": "^1.0.0-beta.33",
-    "web3-typescript-typings": "^0.10.2"
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "chai": "^4.3.4",
+    "mocha": "^9.1.1",
+    "solc": "0.8.7",
+    "ts-node": "^10.2.1",
+    "tslint": "^6.1.3",
+    "tslint-config-standard": "^9.0.0",
+    "typescript": "^4.4.3",
+    "web3": "^1.5.2"
   }
 }
