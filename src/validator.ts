@@ -6,13 +6,16 @@ import codes from './config/codes';
  */
 export class ERC721Validator {
   protected web3: Web3;
+  protected millionCoinAddress: string;
 
   /**
    * Class constructor.
-   * @param {Web3} web3 Instance of Ethereum client.
+   * @param {Web3} web3 Instance of web3 client.
+   * @param {string} millionCoinAddress An address that contains a million or more coins of selected network.
    */
-  public constructor(web3: Web3) {
+  public constructor(web3: Web3, millionCoinAddress: string) {
     this.defineWeb3(web3);
+    this.millionCoinAddress = millionCoinAddress;
   }
 
   /**
@@ -79,7 +82,8 @@ export class ERC721Validator {
           .estimateGas((err, gas) => {
             if (!err) {
               resolve(true);
-            } else if (String(err).includes('always failing transaction')) {
+            } else if (String(err).includes('always failing transaction')
+              || String(err).includes('execution reverted')) {
               resolve(false);
             } else {
               resolve(err);
@@ -111,12 +115,13 @@ export class ERC721Validator {
             arguments: [ test, contract, tokenId, giver ]
           })
           .estimateGas({
-            from: '0xbe0eb53f46cd790cd13851d5eff43d12404d33e8',
+            from: this.millionCoinAddress,
             value: '1000000000000000000000000'
           }, (err, gas) => {
             if (!err) {
               resolve(true);
-            } else if (String(err).includes('always failing transaction')) {
+            } else if (String(err).includes('always failing transaction')
+              || String(err).includes('execution reverted')) {
               resolve(false);
             } else {
               resolve(err);
