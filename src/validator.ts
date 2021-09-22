@@ -1,6 +1,11 @@
 import Web3 from 'web3';
 import codes from './config/codes';
 
+export interface ERC721ValidatorResult {
+  result: boolean,
+  gas: number
+}
+
 /**
  * Ethereum contract validator.
  */
@@ -32,7 +37,7 @@ export class ERC721Validator {
    * Performs tests with the basic contract.
    * @param options Test options.
    */
-  public async basic(test: number, contract: string) {
+  public async basic(test: number, contract: string): Promise<ERC721ValidatorResult> {
     return new Promise(async (resolve, reject) => {
       if (!contract) {
         reject('You must provide contract address as input');
@@ -46,15 +51,20 @@ export class ERC721Validator {
             arguments: [test, contract]
           })
           .estimateGas((err, gas) => {
+            let result = false;
             if (!err) {
-              resolve(true);
+              result = true;
             } else if (String(err).includes('always failing transaction')
              || String(err).includes('execution reverted')
             ) {
-              resolve(false);
+              result = false;
             } else {
-              resolve(err);
+              reject(err);
             }
+            resolve({
+              result,
+              gas
+            });
           });
         } catch (e) {
           reject(e);
@@ -66,7 +76,7 @@ export class ERC721Validator {
    * Performs tests with the token contract.
    * @param options Test options.
    */
-  public async token(test: number, contract: string, tokenId: any) {
+  public async token(test: number, contract: string, tokenId: any): Promise<ERC721ValidatorResult> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!contract) { reject('You must provide contract address as input'); }
@@ -80,14 +90,19 @@ export class ERC721Validator {
             arguments: [ test, contract, tokenId ]
           })
           .estimateGas((err, gas) => {
+            let result = false;
             if (!err) {
-              resolve(true);
+              result = true;
             } else if (String(err).includes('always failing transaction')
               || String(err).includes('execution reverted')) {
-              resolve(false);
+              result = false;
             } else {
-              resolve(err);
+              reject(err);
             }
+            resolve({
+              result,
+              gas
+            });
           });
         } catch (e) {
           reject(e);
@@ -100,7 +115,7 @@ export class ERC721Validator {
    * Performs tests with the token contract.
    * @param options Test options.
    */
-  public async transfer(test: number, contract: string, tokenId: any, giver: string) {
+  public async transfer(test: number, contract: string, tokenId: any, giver: string): Promise<ERC721ValidatorResult> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!contract) { reject('You must provide contract address as input'); }
@@ -118,14 +133,19 @@ export class ERC721Validator {
             from: this.millionCoinAddress,
             value: '1000000000000000000000000'
           }, (err, gas) => {
+            let result = false;
             if (!err) {
-              resolve(true);
+              result = true;
             } else if (String(err).includes('always failing transaction')
               || String(err).includes('execution reverted')) {
-              resolve(false);
+              result = false;
             } else {
-              resolve(err);
+              reject(err);
             }
+            resolve({
+              result,
+              gas
+            });
           });
         } catch (e) {
           reject(e);
