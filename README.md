@@ -1,5 +1,3 @@
-<img src="assets/cover.png" />
-
 [![npm version](https://badge.fury.io/js/%400xcert%2Ferc721-validator.svg)](https://badge.fury.io/js/%400xcert%2Ferc721-validator)
 
 > Ethereum ERC-721 Contract Validator.
@@ -90,4 +88,4 @@ await validator.transfer(test, contract, token, giver); // => [{...},{...},{...}
 
 ## License (MIT)
 
-Copyright (c) 2018 0xcert <admin@0xcert.org>.
+Copyright (c) 2021 Nibbstack <info@nibbstack.com>.
