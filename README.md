@@ -1,5 +1,3 @@
-<img src="assets/cover.png" />
-
 [![npm version](https://badge.fury.io/js/%40nibbstack%2Ferc721-validator.svg)](https://badge.fury.io/js/%40nibbstack%2Ferc721-validator)
 
 > Ethereum ERC-721 Contract Validator.
@@ -17,7 +15,7 @@ For more information on how the validator works please check the [article explai
 Run the command below to install the package.
 
 ```
-npm install --save web3 erc721-validator
+npm install --save web3 @nibbstack/erc721-validator
 ```
 
 This package uses promises thus you need to use [Promise polyfill](https://github.com/taylorhakes/promise-polyfill) when promises are not supported.
