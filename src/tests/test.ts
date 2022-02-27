@@ -6,7 +6,7 @@ describe('Validator', async () => {
   it('should return true', async () => {
     
     const web3 = new Web3(
-      new Web3.providers.HttpProvider('') // TODO add node link
+      new Web3.providers.HttpProvider(process.env['NODE_URL']) // mainnet rpc url
     );
 
     const validator = new ERC721Validator(web3, '0xbe0eb53f46cd790cd13851d5eff43d12404d33e8'); // mainnet address

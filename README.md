@@ -1,12 +1,12 @@
 <img src="assets/cover.png" />
 
-[![npm version](https://badge.fury.io/js/%400xcert%2Ferc721-validator.svg)](https://badge.fury.io/js/%400xcert%2Ferc721-validator)
+[![npm version](https://badge.fury.io/js/%40nibbstack%2Ferc721-validator.svg)](https://badge.fury.io/js/%40nibbstack%2Ferc721-validator)
 
 > Ethereum ERC-721 Contract Validator.
 
 This is an open source package for NodeJS written with [TypeScript](https://www.typescriptlang.org). It allows for validating a contract against a series of tests to check its compliancy with the ERC-721 standard.
 
-This package is actively maintained, well tested and already used in production environments. The source code is available on [GitHub](https://github.com/0xcert/erc721-validator) where you can also find our [issue tracker](https://github.com/0xcert/erc721-validator/issues).
+This package is actively maintained, well tested and already used in production environments. The source code is available on [GitHub](https://github.com/nibbstack/erc721-validator) where you can also find our [issue tracker](https://github.com/nibbstack/erc721-validator/issues).
 
 ## How it works
 
@@ -90,4 +90,4 @@ await validator.transfer(test, contract, token, giver); // => [{...},{...},{...}
 
 ## License (MIT)
 
-Copyright (c) 2018 0xcert <admin@0xcert.org>.
+Copyright (c) 2018 nibbstack <info@nibbstakc.com>.

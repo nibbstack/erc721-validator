@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 const Web3 = require('web3')
 
-const web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/1jm7FU1sXc0lHFEYr83f'));
+const web3 = new Web3(new Web3.providers.HttpProvider(process.env['NODE_URL']));
 const eth: any = web3.eth;
 /**
  * Compiles smart contracts and prints the ABIs.

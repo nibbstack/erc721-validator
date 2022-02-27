@@ -1,5 +1,5 @@
 {
-  "name": "@0xcert/erc721-validator",
+  "name": "@nibbstack/erc721-validator",
   "version": "0.3.0",
   "description": "ERC-721 token validator.",
   "main": "./dist/index.js",
@@ -12,30 +12,21 @@
     "print-abis": "ts-node ./src/scripts/print-abis.ts",
     "test": "./node_modules/.bin/mocha --timeout 60000 --require ts-node/register --inspect --recursive ./src/tests/**/*.ts"
   },
-  "author": "0xcert",
+  "author": "nibbstack",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/0xcert/erc721-validator.git"
+    "url": "git+https://github.com/nibbstack/erc721-validator.git"
   },
   "bugs": {
-    "url": "https://github.com/0xcert/erc721-validator/issues"
+    "url": "https://github.com/nibbstack/erc721-validator/issues"
   },
-  "homepage": "https://github.com/0xcert/erc721-validator#readme",
+  "homepage": "https://github.com/nibbstack/erc721-validator#readme",
   "keywords": [
-    "0xcert",
-    "protocol",
+    "erc721",
+    "nonfungible",
+    "token",
     "ethereum",
-    "scanner",
-    "scan",
-    "parser",
-    "parse",
-    "transaction",
-    "transactions",
-    "blocks",
-    "block",
-    "contracts",
-    "contract",
     "solidity"
   ],
   "dependencies": {
